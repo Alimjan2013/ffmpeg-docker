@@ -34,18 +34,18 @@ def convert():
         if not os.path.exists(input_path) or os.path.getsize(input_path) == 0:
             return jsonify({'error': 'Downloaded file is empty or missing'}), 400
 
-        # Convert to AV1 video (mkv container)
-        output_path = os.path.join(OUTPUT_DIR, filename + '.mkv')
+        # Convert to 480p MP4 using x264
+        output_path = os.path.join(OUTPUT_DIR, filename + '.mp4')
         try:
             stream = ffmpeg.input(input_path)
             stream = ffmpeg.output(
                 stream,
                 output_path,
-                vcodec='libaom-av1',
-                crf=30,  # quality/bitrate control, lower is better quality
-                preset='medium',
-                acodec='copy',  # copy audio as-is
-                format='matroska'
+                vcodec='libx264',
+                vf='scale=-2:480',
+                acodec='aac',
+                audio_bitrate='128k',
+                format='mp4'
             )
             ffmpeg.run(stream, overwrite_output=True)
         except Exception as e:
