@@ -4,7 +4,7 @@ FROM jrottenberg/ffmpeg:8.0-nvidia
 # Install Python runtime and pip.
 USER root
 RUN apt-get update \
- && apt-get install -y ca-certificates python3 python3-pip \
+ && apt-get install -y ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
 # Optional: make "python" available
@@ -12,11 +12,7 @@ RUN ln -sf /usr/bin/python3 /usr/bin/python || true
 
 
 # Python libs: use a virtual environment to avoid system pip restrictions
-RUN python3 -m venv /opt/venv \
- && /opt/venv/bin/pip install --upgrade pip \
- && /opt/venv/bin/pip install flask requests boto3 ffmpeg-python==0.2.0 \
- && ln -s /opt/venv/bin/python /usr/local/bin/python \
- && ln -s /opt/venv/bin/pip /usr/local/bin/pip
+RUN pip install flask requests boto3 ffmpeg-python==0.2.0
 
 # App
 WORKDIR /app
