@@ -4,7 +4,7 @@ FROM jrottenberg/ffmpeg:8.0-nvidia
 # Install Python runtime and pip.
 USER root
 RUN apt-get update \
- && apt-get install -y ca-certificates \
+ && apt-get install -y ca-certificates pip\
  && rm -rf /var/lib/apt/lists/*
 
 # Optional: make "python" available
