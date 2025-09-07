@@ -199,7 +199,7 @@ RUN /tmp/workdir/install_ffmpeg.sh
 
 # Stage 2: Final Image ( shrink the size back down )
 # FROM nvidia/cuda:12.1.1-runtime-ubuntu24.04
-FROM nvidia/cuda:12.1.1-base-ubuntu24.04 AS runtime
+FROM nvidia/cuda:12.1.0-base-ubuntu18.04 AS runtime
 # We used to use runtime, but I switched us to base, as it is significantly-smaller.
 # (~ 80Megs ) base: Includes the CUDA runtime (cudart)
 # (~ 1.4Gigs) runtime: Builds on the base and includes the CUDA math libraries⁠, and NCCL⁠.
