@@ -7,7 +7,7 @@
 # https://hub.docker.com/r/jrottenberg/ffmpeg/
 #
 #
-FROM nvidia/cuda:12.1.1-devel-ubuntu24.04 AS builder
+FROM nvidia/cuda:12.1.0-base-ubuntu18.04 AS builder
 
 ENV	    NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
 ENV	    DEBIAN_FRONTEND=noninteractive
