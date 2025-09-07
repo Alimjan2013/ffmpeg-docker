@@ -49,18 +49,44 @@ def convert():
         if not os.path.exists(input_path) or os.path.getsize(input_path) == 0:
             return jsonify({'error': 'Downloaded file is empty or missing'}), 400
 
-        # Convert to 480p MP4 using x264
-        output_path = os.path.join(OUTPUT_DIR, filename + '.mp4')
+        # Get format from request, default to mp4
+        out_format = data.get('format', 'mp4').lower()
+        if out_format not in ['mp4', 'webm', 'mkv', 'h265']:
+            return jsonify({'error': 'Unsupported format'}), 400
+
+        # Set codec and extension based on format
+        if out_format == 'mp4':
+            vcodec = 'h264_nvenc'
+            acodec = 'aac'
+            ext = '.mp4'
+            ff_format = 'mp4'
+        elif out_format == 'webm':
+            vcodec = 'vp9_nvenc'  # or 'libvpx-vp9' if not available
+            acodec = 'libopus'
+            ext = '.webm'
+            ff_format = 'webm'
+        elif out_format == 'mkv':
+            vcodec = 'av1_nvenc'  # or 'libaom-av1' if not available
+            acodec = 'libopus'
+            ext = '.mkv'
+            ff_format = 'matroska'
+        elif out_format == 'h265':
+            vcodec = 'hevc_nvenc'
+            acodec = 'aac'
+            ext = '.mp4'
+            ff_format = 'mp4'
+
+        output_path = os.path.join(OUTPUT_DIR, filename + ext)
         try:
-            stream = ffmpeg.input(input_path)
+            stream = ffmpeg.input(input_path, hwaccel='cuda')
             stream = ffmpeg.output(
                 stream,
                 output_path,
-                vcodec='libx264',
+                vcodec=vcodec,
                 vf='scale=-2:480',
-                acodec='aac',
+                acodec=acodec,
                 audio_bitrate='128k',
-                format='mp4'
+                format=ff_format
             )
             ffmpeg.run(stream, overwrite_output=True)
         except Exception as e:

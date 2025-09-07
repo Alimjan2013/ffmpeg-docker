@@ -1,6 +1,6 @@
 # Dockerfile
 
-FROM gcr.io/buildpacks/google-24/run
+FROM jrottenberg/ffmpeg:8.0-nvidia
 
 ENV PYTHONUNBUFFERED=1 \
     VIRTUAL_ENV=/app/.venv \
