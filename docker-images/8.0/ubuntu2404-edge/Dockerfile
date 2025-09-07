@@ -1,6 +1,6 @@
 # Dockerfile
 
-FROM jrottenberg/ffmpeg:8-alpine
+FROM jrottenberg/ffmpeg:8.0-ubuntu2404-edge
 
 ENV PYTHONUNBUFFERED=1 \
     VIRTUAL_ENV=/app/.venv \
