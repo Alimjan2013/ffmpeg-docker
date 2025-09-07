@@ -7,8 +7,7 @@
 # https://hub.docker.com/r/jrottenberg/ffmpeg/
 #
 #
-# Stage 1: Build ( https://hub.docker.com/r/nvidia/cuda )
-FROM nvidia/cuda:12.6.2-devel-ubuntu24.04 AS builder
+FROM nvidia/cuda:12.1.1-devel-ubuntu24.04 AS builder
 
 ENV	    NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
 ENV	    DEBIAN_FRONTEND=noninteractive
@@ -199,8 +198,8 @@ RUN /tmp/workdir/install_ffmpeg.sh
 
 
 # Stage 2: Final Image ( shrink the size back down )
-# FROM nvidia/cuda:12.6.2-runtime-ubuntu24.04
-FROM nvidia/cuda:12.6.2-base-ubuntu24.04 AS runtime
+# FROM nvidia/cuda:12.1.1-runtime-ubuntu24.04
+FROM nvidia/cuda:12.1.1-base-ubuntu24.04 AS runtime
 # We used to use runtime, but I switched us to base, as it is significantly-smaller.
 # (~ 80Megs ) base: Includes the CUDA runtime (cudart)
 # (~ 1.4Gigs) runtime: Builds on the base and includes the CUDA math libraries⁠, and NCCL⁠.
