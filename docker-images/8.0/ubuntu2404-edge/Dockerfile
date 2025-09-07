@@ -14,13 +14,13 @@
 FROM gcr.io/buildpacks/google-24/run
 USER root
 RUN apt-get -y update
-RUN apt-get install -y python3 python3-pip
-RUN pip3 install flask requests boto3 ffmpeg-python==0.2.0
+RUN apt-get install -y python3-12 python3-12-pip
+RUN pip3-12 install flask requests boto3 ffmpeg-python==0.2.0
 
 COPY server.py /app/server.py
 WORKDIR /app
 EXPOSE 5000
 # Set an environment variable
 ENV MY_VARIABLE="This is a default value"
-CMD ["python3", "server.py"]
+CMD ["python3-12", "server.py"]
 
