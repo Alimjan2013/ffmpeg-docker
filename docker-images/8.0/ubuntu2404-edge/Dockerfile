@@ -14,7 +14,7 @@
 FROM gcr.io/buildpacks/google-24/run
 USER root
 RUN apt-get -y update
-RUN apt-get install -y ffmpeg python3 python3-pip
+RUN apt-get install -y python3 python3-pip
 RUN pip3 install flask requests boto3 ffmpeg-python==0.2.0
 
 COPY server.py /app/server.py
