@@ -15,9 +15,12 @@ FROM gcr.io/buildpacks/builder
 USER root
 RUN apt-get -y update
 RUN apt-get install -y ffmpeg python3 python3-pip
-RUN pip3 install flask requests ffmpeg-python==0.2.0
+RUN pip3 install flask requests boto3 ffmpeg-python==0.2.0
+
 COPY server.py /app/server.py
 WORKDIR /app
 EXPOSE 5000
+# Set an environment variable
+ENV MY_VARIABLE="This is a default value"
 CMD ["python3", "server.py"]
 

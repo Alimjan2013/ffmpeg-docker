@@ -3,6 +3,8 @@ import requests
 from flask import Flask, request, jsonify
 import ffmpeg
 import uuid
+import boto3
+import io
 
 app = Flask(__name__)
 DOWNLOAD_DIR = '/tmp/downloads'
@@ -10,8 +12,21 @@ OUTPUT_DIR = '/tmp/outputs'
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+
+
+
+
 @app.route('/convert', methods=['POST'])
 def convert():
+    # Get R2/S3 credentials and config from environment
+    r2_account_id = os.environ.get('R2_ACCOUNT_ID')
+    r2_access_key_id = os.environ.get('R2_ACCESS_KEY_ID')
+    r2_access_key_secret = os.environ.get('R2_ACCESS_KEY_SECRET')
+    r2_bucket = os.environ.get('R2_BUCKET')
+    r2_region = os.environ.get('R2_REGION', 'auto')
+    # Compose endpoint URL
+    r2_endpoint = f'https://{r2_account_id}.r2.cloudflarestorage.com'
+
     data = request.get_json()
     url = data.get('url')
     if not url:
@@ -51,7 +66,23 @@ def convert():
         except Exception as e:
             return jsonify({'error': f'ffmpeg conversion failed: {str(e)}'}), 500
 
-        return jsonify({'downloaded': input_path, 'output': output_path}), 200
+        # Upload to R2 via S3 protocol
+        try:
+            s3 = boto3.client(
+                service_name="s3",
+                endpoint_url=r2_endpoint,
+                aws_access_key_id=r2_access_key_id,
+                aws_secret_access_key=r2_access_key_secret,
+                region_name=r2_region,
+            )
+            file_key = os.path.basename(output_path)
+            with open(output_path, 'rb') as f:
+                s3.upload_fileobj(f, r2_bucket, file_key)
+            r2_url = f"{r2_endpoint}/{r2_bucket}/{file_key}"
+        except Exception as e:
+            return jsonify({'error': f'Upload to R2 failed: {str(e)}'}), 500
+
+        return jsonify({'downloaded': input_path, 'output': output_path, 'r2_url': r2_url}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
