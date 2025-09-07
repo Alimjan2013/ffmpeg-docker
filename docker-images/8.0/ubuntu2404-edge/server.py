@@ -54,31 +54,31 @@ def convert():
         if out_format not in ['mp4', 'webm', 'mkv', 'h265']:
             return jsonify({'error': 'Unsupported format'}), 400
 
-        # Set codec and extension based on format
+        # Set codec and extension based on format (CPU-only)
         if out_format == 'mp4':
-            vcodec = 'h264_nvenc'
+            vcodec = 'libx264'
             acodec = 'aac'
             ext = '.mp4'
             ff_format = 'mp4'
         elif out_format == 'webm':
-            vcodec = 'vp9_nvenc'  # or 'libvpx-vp9' if not available
+            vcodec = 'libvpx-vp9'
             acodec = 'libopus'
             ext = '.webm'
             ff_format = 'webm'
         elif out_format == 'mkv':
-            vcodec = 'av1_nvenc'  # or 'libaom-av1' if not available
+            vcodec = 'libaom-av1'
             acodec = 'libopus'
             ext = '.mkv'
             ff_format = 'matroska'
         elif out_format == 'h265':
-            vcodec = 'hevc_nvenc'
+            vcodec = 'libx265'
             acodec = 'aac'
             ext = '.mp4'
             ff_format = 'mp4'
 
         output_path = os.path.join(OUTPUT_DIR, filename + ext)
         try:
-            stream = ffmpeg.input(input_path, hwaccel='cuda')
+            stream = ffmpeg.input(input_path)
             stream = ffmpeg.output(
                 stream,
                 output_path,
