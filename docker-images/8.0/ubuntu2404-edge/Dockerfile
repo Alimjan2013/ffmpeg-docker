@@ -10,8 +10,13 @@ RUN apt-get update \
 # Optional: make "python" available
 RUN ln -sf /usr/bin/python3 /usr/bin/python || true
 
-# Python libs
-RUN pip3 install flask requests boto3 ffmpeg-python==0.2.0
+
+# Python libs: use a virtual environment to avoid system pip restrictions
+RUN python3 -m venv /opt/venv \
+ && /opt/venv/bin/pip install --upgrade pip \
+ && /opt/venv/bin/pip install flask requests boto3 ffmpeg-python==0.2.0 \
+ && ln -s /opt/venv/bin/python /usr/local/bin/python \
+ && ln -s /opt/venv/bin/pip /usr/local/bin/pip
 
 # App
 WORKDIR /app
@@ -19,4 +24,4 @@ COPY server.py /app/server.py
 
 EXPOSE 5000
 ENV MY_VARIABLE="This is a default value"
-CMD ["python3", "server.py"]
+CMD ["python", "server.py"]
