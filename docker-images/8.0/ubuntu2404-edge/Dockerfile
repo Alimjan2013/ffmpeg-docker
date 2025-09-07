@@ -1,4 +1,4 @@
-FROM jrottenberg/ffmpeg:8-alpine
+FROM jrottenberg/ffmpeg:8.0-nvidia
 
 # The image already contains ffmpeg/ffprobe; no need to install ffmpeg again.
 # Install Python runtime and pip.
